@@ -54,7 +54,7 @@ def create_cat_snake():
     grid_data, targets = get_real_data()
     cat_imgs = []
     # 01.png(머리) ~ 05.png(꼬리) 로드
-    for i in range(1, 6):
+    for i in range(1, 8):
         name = f"{str(i).zfill(2)}.png"
         if os.path.exists(name):
             cat_imgs.append(Image.open(name).convert("RGBA").resize((12, 12)))
@@ -84,7 +84,7 @@ def create_cat_snake():
             
             # 먹이 섭취 시 성장 (최대 5)
             if curr_pos == target:
-                curr_len = min(5, curr_len + 1)
+                curr_len = min(7, curr_len + 1)
             
             if len(curr_body) > curr_len:
                 curr_body.pop()
