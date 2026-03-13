@@ -2,34 +2,37 @@ name: Update Cat Train
 
 on:
   schedule:
-    - cron: "0 0 * * *" # 매일 한국 시간 기준 오전 9시경 실행
-  workflow_dispatch: # 우리가 수동으로 '실행' 버튼을 누를 수 있게 해줌
+    - cron: "0 0 * * *" # 매일 한국 시간 오전 9시경 실행
+  workflow_dispatch: # 수동 실행 버튼 활성화
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # 이 설정이 있어야 서버가 파일을 저장할 수 있습니다
+      contents: write
     steps:
-      - uses: actions/checkout@v4 # 내 코드를 서버로 가져옴
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-          
+
       - name: Install dependencies
+        # GIF 생성과 API 통신에 필요한 라이브러리 설치
         run: pip install Pillow requests
 
       - name: Generate Cat Snake GIF
         run: python generate_snake.py
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }} # 시크릿 토큰 연결
+          # 🌟 [중요] Settings > Secrets에 등록한 GH_TOKEN을 불러옵니다.
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Commit and Push
         run: |
-          git config --global user.name "Cat-Manager"
-          git config --global user.email "action@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # SVG 대신 GIF 파일을 저장하도록 수정
           git add cat-snake.gif
-          git commit -m "chore: feed the cats with contributions 🐾" || exit 0
+          git commit -m "chore: update cat-snake.gif with real contributions 🐾" || exit 0
           git push
