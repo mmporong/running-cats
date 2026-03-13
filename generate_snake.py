@@ -20,87 +20,87 @@ def get_real_data():
     try:
         res = requests.post("https://api.github.com/graphql", json={'query': query, 'variables': {'username': username}}, headers=headers)
         weeks = res.json()['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
-        grid = []
-        for r in range(7):
-            row = []
-            for w in weeks:
-                if r < len(w['contributionDays']):
-                    count = w['contributionDays'][r]['contributionCount']
+        grid = [[0 for _ in range(52)] for _ in range(7)]
+        for w_idx, w in enumerate(weeks):
+            for d_idx, d in enumerate(w['contributionDays']):
+                if w_idx < 52 and d_idx < 7:
+                    count = d['contributionCount']
+                    # snk와 동일한 5단계 레벨링
                     level = 0 if count == 0 else (1 if count < 3 else (2 if count < 6 else (3 if count < 10 else 4)))
-                    row.append(level)
-                else: row.append(0)
-            grid.append(row)
+                    grid[d_idx][w_idx] = level
         return grid
     except:
-        # 에러 발생 시 테스트용 가짜 데이터
         return [[(i + j) % 5 for j in range(52)] for i in range(7)]
 
 def create_cat_snake():
     data = get_real_data()
     cat_imgs = []
-    # 01.png ~ 20.png 로드
+    # 01.png ~ 20.png 로드 (사용자 리포지토리에 있는 고양이 이미지 사용)
     for i in range(1, 21):
         name = f"{str(i).zfill(2)}.png"
         if os.path.exists(name):
             cat_imgs.append(Image.open(name).convert("RGBA").resize((12, 12)))
 
-    # 1. S자 이동 경로 계산 (Snake Path)
+    # 1. 수평 S-Curve 경로 생성 (snk의 정석 이동 방식)
+    # Row 0: L->R, Row 1: R->L, Row 2: L->R ...
     path = []
-    for col in range(52):
-        rows = range(7) if col % 2 == 0 else range(6, -1, -1)
-        for row in rows:
-            path.append((col, row))
+    for r in range(7):
+        cols = range(52) if r % 2 == 0 else range(51, -1, -1)
+        for c in cols:
+            path.append((c, r))
 
     frames = []
-    snake_len = 1
     eaten_cells = set()
+    # snk 스타일의 몸통 길이 (일반적으로 5~9마디가 가장 적당함)
+    snake_max_len = len(cat_imgs) # 보유한 고양이 이미지 수만큼 최대 길이 설정
     
-    # 2. 프레임별 시뮬레이션
-    for f in range(len(path)):
-        # 배경 (깃허브 다크모드 색상)
-        img = Image.new("RGBA", (820, 160), (13, 17, 23, 255))
+    # 2. 시뮬레이션: 전체 경로 + 꼬리가 빠져나가는 여유 프레임
+    for f in range(len(path) + snake_max_len):
+        img = Image.new("RGBA", (820, 160), (13, 17, 23, 255)) # GitHub Dark Mode 배경색
         draw = ImageDraw.Draw(img)
         
-        # 현재 머리 위치
-        head_pos = path[f]
-        
-        # 성장 로직: 머리가 잔디(커밋 > 0)를 밟으면 몸길이 증가
-        if data[head_pos[1]][head_pos[0]] > 0 and head_pos not in eaten_cells:
-            snake_len = min(20, snake_len + 1)
-            eaten_cells.add(head_pos)
+        # 머리 위치 확인 및 먹기 판정
+        if f < len(path):
+            head_pos = path[f]
+            if data[head_pos[1]][head_pos[0]] > 0:
+                eaten_cells.add(head_pos)
 
-        # 3. 잔디밭 렌더링
+        # 3. 보드 렌더링 (그리드 정렬)
         for col in range(52):
             for row in range(7):
                 x, y = col * 15 + 20, row * 15 + 20
                 colors = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]
                 color = colors[data[row][col]]
                 
-                # 이미 먹힌 잔디는 배경색으로 지움
+                # 먹힌 잔디는 배경색으로 처리
                 if (col, row) in eaten_cells:
                     color = "#161b22"
                 
+                # 둥근 사각형으로 snk 느낌 극대화
                 draw.rounded_rectangle([x, y, x + 12, y + 12], radius=2, fill=color)
 
-        # 4. 고양이 기차(Snake Body) 렌더링
-        # 머리(f)부터 꼬리(f - snake_len)까지 순서대로 그림
-        for i in range(snake_len):
+        # 4. 고양이 몸통 렌더링 (Trailing Logic)
+        # f부터 f-snake_len까지의 좌표를 역순으로 추적하여 고양이 배치
+        active_segments = 0
+        for i in range(snake_max_len):
             idx = f - i
-            if idx >= 0:
+            if 0 <= idx < len(path):
                 c, r = path[idx]
-                # 고양이 이미지를 순환하며 할당
-                img.paste(cat_imgs[i % len(cat_imgs)], (c * 15 + 20, r * 15 + 20), cat_imgs[i % len(cat_imgs)])
-
-        # 모든 프레임을 다 넣으면 용량이 크므로 2프레임당 1개씩 추출
-        if f % 2 == 0:
+                x, y = c * 15 + 20, r * 15 + 20
+                # 01.png가 머리, 나머지가 몸통
+                img.paste(cat_imgs[i % len(cat_imgs)], (x, y), cat_imgs[i % len(cat_imgs)])
+                active_segments += 1
+        
+        # 뱀이 화면 안에 있을 때만 프레임 추가
+        if active_segments > 0:
             frames.append(img)
 
-    # 5. GIF 저장
+    # 5. GIF 저장 (프레임 속도: 100ms로 조절하여 가독성 확보)
     frames[0].save(
         "cat-snake.gif",
         save_all=True,
         append_images=frames[1:],
-        duration=60,
+        duration=100, 
         loop=0,
         disposal=2
     )
