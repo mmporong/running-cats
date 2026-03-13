@@ -1,63 +1,63 @@
 <svg width="800" height="150" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <rect width="100%" height="100%" fill="transparent" />
 
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/01.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="0.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/01.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="0.0s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/02.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="0.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/02.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="0.6s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/03.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="1.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/03.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="1.2s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/04.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="1.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/04.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="1.7999999999999998s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/05.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="2.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/05.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="2.4s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/06.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="2.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/06.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="3.0s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/07.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="3.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/07.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="3.5999999999999996s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/08.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="3.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/08.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="4.2s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/09.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="4.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/09.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="4.8s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/10.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="4.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/10.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="5.3999999999999995s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/11.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="5.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/11.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="6.0s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/12.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="5.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/12.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="6.6s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/13.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="6.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/13.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="7.199999999999999s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/14.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="6.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/14.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="7.8s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/15.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="7.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/15.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="8.4s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/16.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="7.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/16.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="9.0s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/17.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="8.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/17.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="9.6s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/18.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="8.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/18.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="10.2s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/19.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="9.0s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/19.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="10.799999999999999s" repeatCount="indefinite" />
   </image>
-  <image href="https://raw.githubusercontent.com/mmporong/running-cats/main/20.png" width="50" height="50">
-    <animateMotion path="M -100,60 H 900" dur="10s" begin="9.5s" repeatCount="indefinite" />
+  <image xlink:href="https://raw.githubusercontent.com/mmporong/running-cats/main/20.png" width="50" height="50" y="-25">
+    <animateMotion path="M -100,75 H 900" dur="12s" begin="11.4s" repeatCount="indefinite" />
   </image></svg>
