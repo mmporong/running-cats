@@ -109,8 +109,12 @@ def create_cat_snake():
             for row in range(7):
                 x, y = col * 15 + 20, row * 15 + 20
                 colors = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]
-                color = colors[0 if (col, row) in eaten_cells else (0 if grid_data[row][col] == 0 else 1)]
-                draw.rounded_rectangle([x, y, x + 12, y + 12], radius=2, fill=color)
+                if (col, row) in eaten_cells:
+                    level = 0
+                else:
+                    c = grid_data[row][col]
+                    level = 0 if c == 0 else (1 if c <= 3 else (2 if c <= 6 else (3 if c <= 9 else 4)))
+                draw.rounded_rectangle([x, y, x + 12, y + 12], radius=2, fill=colors[level])
 
         # 뱀(고양이) 그리기
         for i, (c, r) in enumerate(body_snapshots[f]):
