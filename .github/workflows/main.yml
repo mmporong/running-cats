@@ -23,6 +23,8 @@ jobs:
 
       - name: Generate Cat Snake GIF
         run: python generate_snake.py
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # 시크릿 토큰 연결
 
       - name: Commit and Push
         run: |
