@@ -3,75 +3,86 @@ import requests
 import base64
 from PIL import Image, ImageDraw
 
-# 1. 설정
-GITHUB_USERNAME = "mmporong"
-CAT_COUNT = 20
-CANVAS_WIDTH = 800
-CANVAS_HEIGHT = 200
-GRID_SIZE = 12
-SPACING = 3
-
-def get_contribution_data():
-    # 실제 깃허브 잔디 데이터를 가져오려면 토큰이 필요하지만, 
-    # 일단은 형태를 잡기 위해 임의의 잔디 데이터를 생성하는 로직으로 구성합니다.
-    # (추후 깃허브 API 연동 가능)
-    rows, cols = 7, 52
-    return [[(i + j) % 5 for j in range(cols)] for i in range(rows)]
+def get_contributions(token, username):
+    query = """
+    query($username:String!) {
+      user(login:$username) {
+        contributionsCollection {
+          contributionCalendar {
+            weeks {
+              contributionDays {
+                contributionCount
+                color
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.post("https://api.github.com/graphql", json={'query': query, 'variables': {'username': username}}, headers=headers)
+    
+    weeks = response.json()['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
+    # 7행 52열 데이터로 변환
+    grid = []
+    for r in range(7):
+        row = []
+        for w in weeks:
+            if r < len(w['contributionDays']):
+                count = w['contributionDays'][r]['contributionCount']
+                # 커밋 수에 따른 색상 단계 (0~4)
+                level = 0 if count == 0 else (1 if count < 3 else (2 if count < 6 else (3 if count < 10 else 4)))
+                row.append(level)
+            else:
+                row.append(0)
+        grid.append(row)
+    return grid
 
 def create_cat_snake_gif():
-    # 이미지 로드 (01.png ~ 20.png)
+    token = os.getenv("GH_TOKEN")
+    data = get_contributions(token, "mmporong")
+    
     cat_imgs = []
-    for i in range(1, CAT_COUNT + 1):
+    for i in range(1, 21):
         name = f"{str(i).zfill(2)}.png"
         if os.path.exists(name):
-            cat_imgs.append(Image.open(name).convert("RGBA").resize((GRID_SIZE+4, GRID_SIZE+4)))
+            cat_imgs.append(Image.open(name).convert("RGBA").resize((14, 14)))
 
-    if not cat_imgs: return
-
-    data = get_contribution_data()
-    frames = []
-    
-    # 애니메이션 경로 (뱀 게임처럼 ㄷ자로 이동)
     path = []
     for col in range(52):
         row_range = range(7) if col % 2 == 0 else range(6, -1, -1)
-        for row in row_range:
-            path.append((col, row))
+        for row in row_range: path.append((col, row))
 
-    # 100프레임 동안 이동
-    for f in range(len(path) + CAT_COUNT):
-        img = Image.new("RGBA", (CANVAS_WIDTH, CANVAS_HEIGHT), (255, 255, 255, 0))
+    frames = []
+    for f in range(0, len(path) + 20, 2): # 2칸씩 이동해 속도감 조절
+        img = Image.new("RGBA", (800, 200), (255, 255, 255, 0))
         draw = ImageDraw.Draw(img)
         
-        # 1. 잔디 그리기
+        # 잔디 그리기
         for col in range(52):
             for row in range(7):
-                x = col * (GRID_SIZE + SPACING) + 30
-                y = row * (GRID_SIZE + SPACING) + 30
-                # 잔디 색상 (기존 뱀 게임과 동일한 색상셋)
+                x, y = col * 15 + 10, row * 15 + 10
                 colors = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]
                 color = colors[data[row][col]]
                 
-                # 고양이가 이미 지나간 자리는 먹힌 것처럼 연하게 표시 (먹는 연출)
-                path_idx = next((i for i, p in enumerate(path) if p == (col, row)), -1)
-                if path_idx != -1 and path_idx < f - CAT_COUNT:
-                    color = "#eeeeee" # 먹힌 잔디 색
+                # 고양이 기차가 지나간 곳은 '먹힌' 효과 (배경색으로)
+                for idx in range(max(0, f-20), f):
+                    if idx < len(path) and path[idx] == (col, row):
+                        color = "#ffffff" 
                 
-                draw.rectangle([x, y, x + GRID_SIZE, y + GRID_SIZE], fill=color)
+                draw.rectangle([x, y, x + 12, y + 12], fill=color)
 
-        # 2. 고양이 기차 그리기 (뱀 마디)
-        for i in range(CAT_COUNT):
+        # 고양이 배치
+        for i in range(20):
             idx = f - i
             if 0 <= idx < len(path):
-                col, row = path[idx]
-                x = col * (GRID_SIZE + SPACING) + 30 - 2
-                y = row * (GRID_SIZE + SPACING) + 30 - 2
-                img.paste(cat_imgs[i], (x, y), cat_imgs[i])
-
+                c, r = path[idx]
+                img.paste(cat_imgs[i], (c * 15 + 8, r * 15 + 8), cat_imgs[i])
+        
         frames.append(img)
 
-    # 3. GIF 저장
-    frames[0].save("cat-snake.gif", save_all=True, append_images=frames[1:], duration=100, loop=0, disposal=2)
+    frames[0].save("cat-snake.gif", save_all=True, append_images=frames[1:], duration=80, loop=0, disposal=2)
 
 if __name__ == "__main__":
     create_cat_snake_gif()
