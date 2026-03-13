@@ -12,16 +12,10 @@ def generate_svg():
     path_data = "M -100,60 H 900" 
 
     svg_header = f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
-    svg_footer = '</svg>'
-    
-    content = '  <rect width="100%" height="100%" fill="transparent" />\n'
-    
-    for i, img_url in enumerate(CAT_IMAGES):
-        delay = i * 0.5 # 고양이 사이의 간격
-        duration = "10s" # 이동 속도
-        
-        content += f'''
-  <image href="{img_url}" width="50" height="50">
+
+# image 태그 부분도 href 대신 xlink:href 를 써보는 것이 더 확실합니다.
+content += f'''
+  <image xlink:href="{img_url}" width="50" height="50">
     <animateMotion path="{path_data}" dur="{duration}" begin="{delay}s" repeatCount="indefinite" />
   </image>'''
 
@@ -29,4 +23,5 @@ def generate_svg():
         f.write(svg_header + content + svg_footer)
 
 if __name__ == "__main__":
+
     generate_svg()
