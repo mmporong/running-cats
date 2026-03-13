@@ -2,8 +2,8 @@ name: Update Cat Train
 
 on:
   schedule:
-    - cron: "0 0 * * *" # 매일 한국 시간 오전 9시경 실행
-  workflow_dispatch: # 수동 실행 버튼 활성화
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,20 +19,17 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        # GIF 생성과 API 통신에 필요한 라이브러리 설치
         run: pip install Pillow requests
 
       - name: Generate Cat Snake GIF
         run: python generate_snake.py
         env:
-          # 🌟 [중요] Settings > Secrets에 등록한 GH_TOKEN을 불러옵니다.
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Commit and Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # SVG 대신 GIF 파일을 저장하도록 수정
           git add cat-snake.gif
-          git commit -m "chore: update cat-snake.gif with real contributions 🐾" || exit 0
+          git commit -m "chore: cat snake leveled up! 🐾" || exit 0
           git push
