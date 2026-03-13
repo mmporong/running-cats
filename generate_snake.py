@@ -1,51 +1,77 @@
-import base64
 import os
+import requests
+import base64
+from PIL import Image, ImageDraw
 
-def generate_svg():
-    # 1. 파일 찾기 및 로그 기록
-    encoded_images = []
-    found_files = []
+# 1. 설정
+GITHUB_USERNAME = "mmporong"
+CAT_COUNT = 20
+CANVAS_WIDTH = 800
+CANVAS_HEIGHT = 200
+GRID_SIZE = 12
+SPACING = 3
+
+def get_contribution_data():
+    # 실제 깃허브 잔디 데이터를 가져오려면 토큰이 필요하지만, 
+    # 일단은 형태를 잡기 위해 임의의 잔디 데이터를 생성하는 로직으로 구성합니다.
+    # (추후 깃허브 API 연동 가능)
+    rows, cols = 7, 52
+    return [[(i + j) % 5 for j in range(cols)] for i in range(rows)]
+
+def create_cat_snake_gif():
+    # 이미지 로드 (01.png ~ 20.png)
+    cat_imgs = []
+    for i in range(1, CAT_COUNT + 1):
+        name = f"{str(i).zfill(2)}.png"
+        if os.path.exists(name):
+            cat_imgs.append(Image.open(name).convert("RGBA").resize((GRID_SIZE+4, GRID_SIZE+4)))
+
+    if not cat_imgs: return
+
+    data = get_contribution_data()
+    frames = []
     
-    # 현재 디렉토리의 모든 파일 목록 출력 (디버깅용)
-    all_files = os.listdir('.')
-    
-    for i in range(1, 21):
-        # 01.png, 02.png ... 형식 확인
-        file_name = f"{str(i).zfill(2)}.png"
+    # 애니메이션 경로 (뱀 게임처럼 ㄷ자로 이동)
+    path = []
+    for col in range(52):
+        row_range = range(7) if col % 2 == 0 else range(6, -1, -1)
+        for row in row_range:
+            path.append((col, row))
+
+    # 100프레임 동안 이동
+    for f in range(len(path) + CAT_COUNT):
+        img = Image.new("RGBA", (CANVAS_WIDTH, CANVAS_HEIGHT), (255, 255, 255, 0))
+        draw = ImageDraw.Draw(img)
         
-        if os.path.exists(file_name):
-            with open(file_name, "rb") as f:
-                data = base64.b64encode(f.read()).decode("utf-8")
-                encoded_images.append(f"data:image/png;base64,{data}")
-                found_files.append(file_name)
-        else:
-            print(f"File not found: {file_name}")
+        # 1. 잔디 그리기
+        for col in range(52):
+            for row in range(7):
+                x = col * (GRID_SIZE + SPACING) + 30
+                y = row * (GRID_SIZE + SPACING) + 30
+                # 잔디 색상 (기존 뱀 게임과 동일한 색상셋)
+                colors = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]
+                color = colors[data[row][col]]
+                
+                # 고양이가 이미 지나간 자리는 먹힌 것처럼 연하게 표시 (먹는 연출)
+                path_idx = next((i for i, p in enumerate(path) if p == (col, row)), -1)
+                if path_idx != -1 and path_idx < f - CAT_COUNT:
+                    color = "#eeeeee" # 먹힌 잔디 색
+                
+                draw.rectangle([x, y, x + GRID_SIZE, y + GRID_SIZE], fill=color)
 
-    # 2. SVG 생성
-    width = 800
-    height = 150
-    path_data = "M -100,75 H 900"
+        # 2. 고양이 기차 그리기 (뱀 마디)
+        for i in range(CAT_COUNT):
+            idx = f - i
+            if 0 <= idx < len(path):
+                col, row = path[idx]
+                x = col * (GRID_SIZE + SPACING) + 30 - 2
+                y = row * (GRID_SIZE + SPACING) + 30 - 2
+                img.paste(cat_imgs[i], (x, y), cat_imgs[i])
 
-    svg_header = f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
-    svg_footer = '</svg>'
-    
-    # 배경
-    content = '  <rect width="100%" height="100%" fill="transparent" />\n'
-    
-    # 🌟 만약 이미지를 하나도 못 찾았다면 에러 메시지 표시
-    if not encoded_images:
-        content += f'  <text x="10" y="50" fill="red" font-size="20">Error: No PNGs found! Found: {", ".join(all_files[:5])}...</text>'
-    else:
-        for i, base64_data in enumerate(encoded_images):
-            delay = i * 0.6
-            duration = "12s"
-            content += f'''
-  <image xlink:href="{base64_data}" width="50" height="50" y="-25">
-    <animateMotion path="{path_data}" dur="{duration}" begin="{delay}s" repeatCount="indefinite" />
-  </image>'''
+        frames.append(img)
 
-    with open("cat-snake.svg", "w") as f:
-        f.write(svg_header + content + svg_footer)
+    # 3. GIF 저장
+    frames[0].save("cat-snake.gif", save_all=True, append_images=frames[1:], duration=100, loop=0, disposal=2)
 
 if __name__ == "__main__":
-    generate_svg()
+    create_cat_snake_gif()
