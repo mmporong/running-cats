@@ -20,12 +20,12 @@ def get_real_data():
     headers = {"Authorization": f"Bearer {token}"}
     try:
         res = requests.post("https://api.github.com/graphql", json={'query': query, 'variables': {'username': username}}, headers=headers)
-        weeks = res.json()['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
+        weeks = res.json()['data']['user']['contributionsCollection']['contributionCalendar']['weeks'][-52:]
         grid = [[0 for _ in range(52)] for _ in range(7)]
         targets = []
         for w_idx, w in enumerate(weeks):
             for d_idx, d in enumerate(w['contributionDays']):
-                if w_idx < 52 and d_idx < 7:
+                if d_idx < 7:
                     count = d['contributionCount']
                     grid[d_idx][w_idx] = count
                     if count > 0: targets.append((w_idx, d_idx))
