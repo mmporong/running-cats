@@ -2,7 +2,7 @@ name: Update Cat Train
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "5 15 * * *"
   workflow_dispatch:
 
 jobs:
@@ -25,11 +25,13 @@ jobs:
         run: python generate_snake.py
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          TZ: Asia/Seoul
 
       - name: Commit and Push
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          commit_date="$(TZ=Asia/Seoul date '+%Y-%m-%dT%H:%M:%S%z')"
+          git config --global user.name "mmporong"
+          git config --global user.email "74720422+mmporong@users.noreply.github.com"
           git add cat-snake.gif
-          git commit -m "chore: real snake logic applied 🐾" || exit 0
+          GIT_AUTHOR_DATE="$commit_date" GIT_COMMITTER_DATE="$commit_date" git commit -m "chore: real snake logic applied 🐾" || exit 0
           git push
