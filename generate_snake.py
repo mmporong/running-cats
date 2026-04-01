@@ -142,6 +142,13 @@ def create_cat_snake():
             snake_lengths.append(curr_len)
             body_snapshots.append(list(curr_body))
 
+    # 진단 출력
+    total_targets = len(targets)
+    eaten_count = total_targets - len(remaining_targets)
+    print(f"[진단] 전체 타겟: {total_targets}, 먹은 수: {eaten_count}, 남은 수: {len(remaining_targets)}, 총 프레임: {len(full_path)}")
+    if remaining_targets:
+        print(f"[진단] 못 먹은 타겟: {remaining_targets[:20]}")
+
     # 2. 렌더링
     frames = []
     eaten_cells = set()
