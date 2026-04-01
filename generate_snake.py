@@ -54,14 +54,32 @@ def get_real_data():
 
 # 🌟 최단 경로 탐색 및 몸통 충돌 회피 알고리즘
 def find_path(start, target, body, width=52, height=7):
+    if start == target:
+        return [target]
+
+    # 꼬리 쪽은 이동하면서 빠지므로, 머리 쪽 절반만 장애물로 취급
+    safe_body = set(body[:max(1, len(body) // 2)])
+
     queue = deque([(start, [])])
     visited = {start}
-    visited.update(set(body)) # 현재 몸통 위치는 장애물로 간주
+    visited.update(safe_body)
 
     while queue:
         (x, y), path = queue.popleft()
         if (x, y) == target: return path
 
+        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in visited:
+                visited.add((nx, ny))
+                queue.append(((nx, ny), path + [(nx, ny)]))
+
+    # 몸통 회피로 경로를 못 찾으면, 몸통 무시하고 재탐색
+    queue = deque([(start, [])])
+    visited = {start}
+    while queue:
+        (x, y), path = queue.popleft()
+        if (x, y) == target: return path
         for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             nx, ny = x + dx, y + dy
             if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in visited:
@@ -88,26 +106,38 @@ def create_cat_snake():
     curr_len = 1
     remaining_targets = targets[:]
 
-    while remaining_targets:
+    max_retries = len(remaining_targets) * 2
+    retry_count = 0
+
+    while remaining_targets and retry_count < max_retries:
         # 가장 가까운 타겟 선정
         remaining_targets.sort(key=lambda t: abs(t[0]-curr_pos[0]) + abs(t[1]-curr_pos[1]))
         target = remaining_targets.pop(0)
-        
+
         # 타겟까지의 경로 탐색 (몸통 회피 포함)
         sub_path = find_path(curr_pos, target, curr_body)
-        if not sub_path: continue
+        if not sub_path:
+            # 경로 실패 시 타겟을 리스트 끝에 재삽입 (영구 손실 방지)
+            remaining_targets.append(target)
+            retry_count += 1
+            continue
+
+        retry_count = 0
 
         for next_step in sub_path:
             curr_pos = next_step
             curr_body.insert(0, curr_pos)
-            
+
             # 먹이 섭취 시 성장 (최대 7)
-            if curr_pos == target:
+            if curr_pos == target or curr_pos in remaining_targets:
                 curr_len = min(7, curr_len + 1)
-            
+                # 경로 중간에 다른 타겟을 지나가면 먹기 처리
+                if curr_pos in remaining_targets:
+                    remaining_targets.remove(curr_pos)
+
             if len(curr_body) > curr_len:
                 curr_body.pop()
-            
+
             full_path.append(curr_pos)
             snake_lengths.append(curr_len)
             body_snapshots.append(list(curr_body))
