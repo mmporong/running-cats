@@ -177,7 +177,7 @@ def create_cat_snake():
         frames.append(img)
 
     if frames:
-        # 마지막에 다 먹은 상태를 보여주는 정지 프레임 추가 (3초)
+        # 마지막에 다 먹은 상태를 보여주는 정지 프레임 추가 (1초)
         final_img = Image.new("RGBA", (820, 160), (13, 17, 23, 255))
         final_draw = ImageDraw.Draw(final_img)
         for col in range(52):
@@ -189,7 +189,7 @@ def create_cat_snake():
                 else:
                     level = grid_data[row][col]
                 final_draw.rounded_rectangle([x, y, x + 12, y + 12], radius=2, fill=colors[level])
-        for _ in range(30):
+        for _ in range(10):
             frames.append(final_img)
 
         frames[0].save("cat-snake.gif", save_all=True, append_images=frames[1:], duration=100, loop=0, disposal=2)
