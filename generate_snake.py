@@ -57,29 +57,14 @@ def find_path(start, target, body, width=52, height=7):
     if start == target:
         return [target]
 
-    # 꼬리 쪽은 이동하면서 빠지므로, 머리 쪽 절반만 장애물로 취급
-    safe_body = set(body[:max(1, len(body) // 2)])
-
     queue = deque([(start, [])])
     visited = {start}
-    visited.update(safe_body)
+    visited.update(set(body))  # 전체 몸통을 장애물로 취급
 
     while queue:
         (x, y), path = queue.popleft()
         if (x, y) == target: return path
 
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in visited:
-                visited.add((nx, ny))
-                queue.append(((nx, ny), path + [(nx, ny)]))
-
-    # 몸통 회피로 경로를 못 찾으면, 몸통 무시하고 재탐색
-    queue = deque([(start, [])])
-    visited = {start}
-    while queue:
-        (x, y), path = queue.popleft()
-        if (x, y) == target: return path
         for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             nx, ny = x + dx, y + dy
             if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in visited:
