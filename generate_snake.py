@@ -104,26 +104,27 @@ def create_cat_snake():
     curr_pos = (0, 0)
     curr_body = [(0, 0)]
     curr_len = 1
-    # 컬럼 순 지그재그 스윕 (왼→오, 짝수열 위→아래, 홀수열 아래→위)
+    remaining_targets = targets[:]
     remaining_set = set(targets)
-    sorted_targets = []
-    for col in range(52):
-        col_targets = [(c, r) for c, r in targets if c == col]
-        if col % 2 == 0:
-            col_targets.sort(key=lambda t: t[1])       # 위→아래
-        else:
-            col_targets.sort(key=lambda t: -t[1])      # 아래→위
-        sorted_targets.extend(col_targets)
 
-    for target in sorted_targets:
-        if target not in remaining_set:
-            continue  # 이미 경로 중간에 먹은 타겟
+    max_retries = len(remaining_targets) * 2
+    retry_count = 0
+
+    while remaining_targets and retry_count < max_retries:
+        # 가장 가까운 타겟 선정 (nearest-neighbor)
+        remaining_targets.sort(key=lambda t: abs(t[0]-curr_pos[0]) + abs(t[1]-curr_pos[1]))
+        target = remaining_targets.pop(0)
         remaining_set.discard(target)
 
         # 타겟까지의 경로 탐색 (몸통 회피 포함)
         sub_path = find_path(curr_pos, target, curr_body)
         if not sub_path:
+            remaining_targets.append(target)
+            remaining_set.add(target)
+            retry_count += 1
             continue
+
+        retry_count = 0
 
         for next_step in sub_path:
             curr_pos = next_step
@@ -133,7 +134,10 @@ def create_cat_snake():
             if curr_pos == target or curr_pos in remaining_set:
                 curr_len = min(7, curr_len + 1)
                 # 경로 중간에 다른 타겟을 지나가면 먹기 처리
-                remaining_set.discard(curr_pos)
+                if curr_pos in remaining_set:
+                    remaining_set.discard(curr_pos)
+                    if curr_pos in remaining_targets:
+                        remaining_targets.remove(curr_pos)
 
             if len(curr_body) > curr_len:
                 curr_body.pop()
